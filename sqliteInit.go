@@ -13,6 +13,9 @@ func openDB() *sql.DB  {
 	handleError(err)
 
 	_, err = db.Exec(`
+
+					PRAGMA foreign_keys = ON;
+					
 					CREATE TABLE IF NOT EXISTS players (
 						id INTEGER PRIMARY KEY,
 						first_name TEXT,
@@ -24,7 +27,9 @@ func openDB() *sql.DB  {
 						teamA INTEGER,
 						teamB INTEGER,
 						scoreA INTEGER,
-						scoreB INTEGER
+						scoreB INTEGER,
+						FOREIGN KEY (teamA) REFERENCES teams(id),
+						FOREIGN KEY (teamB) REFERENCES teams(id)
 					);
 					
 					CREATE TABLE IF NOT EXISTS teams (
@@ -35,7 +40,9 @@ func openDB() *sql.DB  {
 					CREATE TABLE IF NOT EXISTS team_player(
 						id INTEGER PRIMARY KEY,
 						team_id INTEGER,
-						player_id INTEGER
+						player_id INTEGER,
+						FOREIGN KEY (team_id) REFERENCES teams(id),
+						FOREIGN KEY (player_id) REFERENCES players(id)
 					)
 					`)
 	handleError(err)
