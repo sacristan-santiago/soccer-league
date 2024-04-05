@@ -17,13 +17,13 @@ func sortTeams(players []Player, size int) []Team {
 		for j := 0 ; j < size ; j++ {
 			player := players[i*size + j]
 			team := teams[j]
-			team.players = append(team.players, player)
-			team.rating = (team.rating * (float32(len(team.players)) - 1) + player.Rating ) / float32(len(team.players))
+			team.Players = append(team.Players, player)
+			team.Rating = (team.Rating * (float32(len(team.Players)) - 1) + player.Rating ) / float32(len(team.Players))
 			teams[j] = team
 		}
 
 		sort.Slice(teams[:], func(i, j int) bool {
-			return teams[i].rating < teams[j].rating
+			return teams[i].Rating < teams[j].Rating
 		})
 	}
 

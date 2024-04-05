@@ -20,10 +20,10 @@ func selectTeam(id int) Team {
 
 	for rows.Next() {
 		var player Player
-		if err := rows.Scan(&team.id, &team.name, &player.Id, &player.FirstName, &player.LastName, &player.Rating); err != nil {
+		if err := rows.Scan(&team.Id, &team.Name, &player.Id, &player.FirstName, &player.LastName, &player.Rating); err != nil {
 			handleError(err)
 		}
-		team.players = append(team.players, player)
+		team.Players = append(team.Players, player)
 	}
     if err = rows.Err(); err != nil {
         handleError(err)
@@ -35,7 +35,7 @@ func selectTeam(id int) Team {
 		JOIN team_player ON players.id = team_player.player_id 
 		WHERE team_player.team_id = ?
 		`, id)
-	err = row.Scan(&team.rating)
+	err = row.Scan(&team.Rating)
 	handleError(err)
 
 	return team

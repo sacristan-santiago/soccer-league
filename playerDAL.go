@@ -11,7 +11,7 @@ func selectPlayer(id int) Player {
 }
 
 func addPlayer(newPlayer PlayerDTO) int {
-    result, err := db.Exec(`INSERT INTO players (first_name, last_name, rating) VALUES (?, ?, ?)`, newPlayer.firstName, newPlayer.lastName, newPlayer.rating)
+    result, err := db.Exec(`INSERT INTO players (first_name, last_name, rating) VALUES (?, ?, ?)`, newPlayer.FirstName, newPlayer.LastName, newPlayer.Rating)
     handleError(err)
 
     lastInsertedID, err := result.LastInsertId()

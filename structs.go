@@ -1,36 +1,36 @@
 package main
 
 type Player struct {
-	Id int
-	FirstName string
-	LastName string
-	Rating float32
+	Id int `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName string `json:"lastName"`
+	Rating float32 `json:"rating"`
 }
 
 type PlayerDTO struct {
-	firstName string
-	lastName string
-	rating float32
+	FirstName string
+	LastName  string
+	Rating    float32
 }
 
 type Team struct {
-	id int 
-	name string
-	players []Player
-	rating float32
+	Id int `json:"id"`
+	Name string `json:"name"`
+	Players []Player `json:"players"`
+	Rating float32 `json:"rating"`
 }
 
 type Match struct {
-	id int
-	teamA int
-	teamB int
-	scoreA int
-	scoreB int
+	Id int `json:"id"`
+	TeamA int `json:"teamA"`
+	TeamB int `json:"teamB"`
+	ScoreA int `json:"scoreA"`
+	ScoreB int `json:"scoreB"`
 }
 
 type MatchDTO struct {
-	teamA int
-	teamB int
-	scoreA int
-	scoreB int
+	TeamA int
+	TeamB int
+	ScoreA int
+	ScoreB int
 }
