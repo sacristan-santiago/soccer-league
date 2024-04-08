@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to Soccer-League Manager</h1>
+    </header>
+
+    <main>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Available Teams</h2>
+                <ul id="teamList"></ul>
+            </div>
+        </div>
+
+        <div class="margin20">
+            <h2>Manage Players</h2>
+            <div class="width33">
+                <table class="width100" id="playerTable">
+                    <thead>
+                        <tr class="PlayersTable">
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playerTableBody">
+                    </tbody>
+                </table>
+
+                <form class="PlayersTable" id="playerForm" action="http://localhost:3000/players" method="POST">
+                    <input class="width100" type="text" id="FirstName" name="FirstName" required>
+                    <input class="width100" type="LastName" id="LastName" name="LastName" required>
+                    <input class="width100" type="number" id="Rating" name="Rating" required>
+                    <button type="submit">Add</button></td>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="margin20">
+            <h2>Manage Teams</h2>
+            <div class="width33">
+                <table class="width100" id="teamsTable">
+                    <thead>
+                        <tr class="TeamsTable">
+                            <th>Team Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamTableBody">
+                    </tbody>
+                </table>
+
+                <form class="TeamsTable" id="teamForm" action="http://localhost:3000/teams" method="POST">
+                    <input class="width100" type="text" id="Name" name="Name" required>
+                    <button type="submit">Add</button></td>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Soccer-League Manager</p>
+        <p>Author: Santiago Sacristan</p>
+    </footer>
+
+    <script src="loadTeams.js"></script>
+    <script src="loadPlayers.js"></script>
+    <script src="playersHandler.js"></script>
+    <script src="teamsHandler.js"></script>
+</body>
+
+</html>
