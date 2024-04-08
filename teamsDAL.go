@@ -60,6 +60,35 @@ func deleteTeam(id int) {
 
 }
 
+func selectPlayerTeams(playerId int) []int {
+	rows, err := db.Query(
+		`SELECT 
+			teams.id	
+		FROM teams 
+		JOIN team_player ON teams.id = team_player.team_id
+		JOIN players ON players.id = team_player.player_id
+		WHERE players.id = ?
+		`, playerId)
+	handleError(err)
+	defer rows.Close()
+
+	var teams []int
+	for rows.Next() {
+		
+		var team int
+		if err := rows.Scan(&team); err != nil {
+			handleError(err)
+		}
+
+		teams = append(teams, team)
+	}
+    if err = rows.Err(); err != nil {
+        handleError(err)
+    }
+
+	return teams
+}
+
 func addPlayertoTeam(playerId int, teamId int) int {
 	result, err := db.Exec(`INSERT INTO team_player (player_id, team_id) VALUES (?, ?)`, playerId, teamId)
     handleError(err)

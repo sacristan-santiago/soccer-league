@@ -7,12 +7,6 @@ type Player struct {
 	Rating float32 `json:"rating"`
 }
 
-type PlayerDTO struct {
-	FirstName string
-	LastName  string
-	Rating    float32
-}
-
 type Team struct {
 	Id int `json:"id"`
 	Name string `json:"name"`
@@ -33,4 +27,15 @@ type MatchDTO struct {
 	TeamB int
 	ScoreA int
 	ScoreB int
+}
+
+type PlayerDTO struct {
+	FirstName string
+	LastName  string
+	Rating    float32
+}
+
+type TeamPlayerDTO struct {
+	TeamId int
+	PlayerId int
 }

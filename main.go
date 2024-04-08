@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"encoding/json"
 	"strconv"
-    "math/rand"
-    "time"
 )
 
 
@@ -52,26 +50,72 @@ func matchAddFunc(body []byte) int {
     return addMatch(match)
 }
 
-func getHandler(selectionFunc func(id int) interface{}) http.HandlerFunc {
+func teamPlayerAddFunc(body []byte) int {
+    var teamPlayer TeamPlayerDTO
+    if err := json.Unmarshal(body, &teamPlayer); err != nil {
+        panic(err)
+    }
+
+    return addPlayertoTeam(teamPlayer.PlayerId, teamPlayer.TeamId)
+}
+
+func playerDeleteFunc(id int) {
+    playerTeams := selectPlayerTeams(id)
+
+    for _, team := range playerTeams {
+        deletePlayerfromTeam(id, team)
+    }
+
+    deletePlayer(id)
+}
+
+func getDeleteHandler(selectionFunc func(id int) interface{}, deleteFunc func(id int)) http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+
+        idString := req.PathValue("id")
+        id, err := strconv.Atoi(idString)
+        if err != nil {
+            http.Error(w, "Invalid ID", http.StatusBadRequest)
+            return
+        }
+        
         if req.Method ==  http.MethodGet {
-            idString := req.PathValue("id")
-            id, err := strconv.Atoi(idString)
-            if err != nil {
-                http.Error(w, "Invalid ID", http.StatusBadRequest)
-                return
-            }
-
             bodyObj := selectionFunc(id)
-
-            w.Header().Set("Content-Type", "application/json")
-            w.WriteHeader(http.StatusOK)
 
             err = json.NewEncoder(w).Encode(bodyObj)
             if err != nil {
                 http.Error(w, "Cannot parse response", http.StatusInternalServerError)
                 return
             }
+        } else if req.Method == http.MethodDelete {
+            deleteFunc(id)
+            fmt.Fprintf(w, "Entity with Id: %d Succesfully deleted", id)
+        }
+    }
+}
+
+func deleteTeamPlayerHandler() http.HandlerFunc {
+    return func(w http.ResponseWriter, req *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+
+        teamIDString := req.PathValue("teamID")
+        teamID, err := strconv.Atoi(teamIDString)
+        if err != nil {
+            http.Error(w, "Invalid ID", http.StatusBadRequest)
+            return
+        }
+
+        playerIDString := req.PathValue("playerID")
+        playerID, err := strconv.Atoi(playerIDString)
+        if err != nil {
+            http.Error(w, "Invalid ID", http.StatusBadRequest)
+            return
+        }
+        
+        if req.Method == http.MethodDelete {
+            deletePlayerfromTeam(playerID, teamID)
+            fmt.Fprintf(w, "Player with ID: %d succesfully removed from team: %d", playerID, teamID )
         }
     }
 }
@@ -95,7 +139,6 @@ func postHandler(addFunc func(body []byte) int) http.HandlerFunc {
             }
 
             w.Header().Set("Content-Type", "application/json")
-            w.WriteHeader(http.StatusOK)
             fmt.Fprintf(w, "{\n\"id\": %d\n}", id)
         }
     }
@@ -107,17 +150,21 @@ func main() {
 
     mux := http.NewServeMux()
 
-    mux.HandleFunc("/players/{id}", getHandler(playerSelectionFunc))
+    mux.HandleFunc("/players/{id}", getDeleteHandler(playerSelectionFunc, playerDeleteFunc))
 
-    mux.HandleFunc("/teams/{id}", getHandler(teamSelectionFunc))
+    mux.HandleFunc("/teams/{id}", getDeleteHandler(teamSelectionFunc, deleteTeam))
 
-    mux.HandleFunc("/match/{id}", getHandler(matchSelectionFunc))
+    mux.HandleFunc("/match/{id}", getDeleteHandler(matchSelectionFunc, deleteMatch))
+
+    mux.HandleFunc("/teams/player/{teamID}/{playerID}", deleteTeamPlayerHandler())
 
     mux.HandleFunc("/players", postHandler(playerAddFunc))
 
     mux.HandleFunc("/teams", postHandler(teamAddFunc))
 
     mux.HandleFunc("/match", postHandler(matchAddFunc))
+
+    mux.HandleFunc("/teams/player", postHandler(teamPlayerAddFunc))
 
 	fmt.Println("Open your web browser and visit http://localhost:8080")
     http.ListenAndServe(":8080", mux)
