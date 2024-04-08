@@ -31,7 +31,7 @@ func playerAddFunc(body []byte) int {
 }
 
 func teamAddFunc(body []byte) int {
-    var team string
+    var team TeamDTO
     err := json.Unmarshal(body, &team)
     if err != nil {
         panic(err)
@@ -69,6 +69,66 @@ func playerDeleteFunc(id int) {
     deletePlayer(id)
 }
 
+func deleteTeamPlayerHandler() http.HandlerFunc {
+    return func(w http.ResponseWriter, req *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+
+        teamIDString := req.PathValue("teamID")
+        teamID, err := strconv.Atoi(teamIDString)
+        if err != nil {
+            http.Error(w, "Invalid ID", http.StatusBadRequest)
+            return
+        }
+
+        playerIDString := req.PathValue("playerID")
+        playerID, err := strconv.Atoi(playerIDString)
+        if err != nil {
+            http.Error(w, "Invalid ID", http.StatusBadRequest)
+            return
+        }
+        
+        if req.Method == http.MethodPost {
+            addPlayertoTeam(playerID, teamID)
+        } else if req.Method == http.MethodDelete {
+            deletePlayerfromTeam(playerID, teamID)
+            fmt.Fprintf(w, "Player with ID: %d succesfully removed from team: %d", playerID, teamID )
+        }
+    }
+}
+
+func getTeamsHandler() http.HandlerFunc {
+    return func(w http.ResponseWriter, req *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        
+        if req.Method ==  http.MethodGet {
+            teams := selectTeams()
+
+            err := json.NewEncoder(w).Encode(teams)
+            if err != nil {
+                http.Error(w, "Cannot parse response", http.StatusInternalServerError)
+                return
+            }
+        }
+    }
+}
+
+func getPlayersHandler() http.HandlerFunc {
+    return func(w http.ResponseWriter, req *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        
+        if req.Method ==  http.MethodGet {
+            players := selectPlayers()
+
+            err := json.NewEncoder(w).Encode(players)
+            if err != nil {
+                http.Error(w, "Cannot parse response", http.StatusInternalServerError)
+                return
+            }
+        }
+    }
+}
+
+
 func getDeleteHandler(selectionFunc func(id int) interface{}, deleteFunc func(id int)) http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
         w.Header().Set("Content-Type", "application/json")
@@ -95,38 +155,12 @@ func getDeleteHandler(selectionFunc func(id int) interface{}, deleteFunc func(id
     }
 }
 
-func deleteTeamPlayerHandler() http.HandlerFunc {
-    return func(w http.ResponseWriter, req *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-
-        teamIDString := req.PathValue("teamID")
-        teamID, err := strconv.Atoi(teamIDString)
-        if err != nil {
-            http.Error(w, "Invalid ID", http.StatusBadRequest)
-            return
-        }
-
-        playerIDString := req.PathValue("playerID")
-        playerID, err := strconv.Atoi(playerIDString)
-        if err != nil {
-            http.Error(w, "Invalid ID", http.StatusBadRequest)
-            return
-        }
-        
-        if req.Method == http.MethodDelete {
-            deletePlayerfromTeam(playerID, teamID)
-            fmt.Fprintf(w, "Player with ID: %d succesfully removed from team: %d", playerID, teamID )
-        }
-    }
-}
-
 func postHandler(addFunc func(body []byte) int) http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
         if req.Method ==  http.MethodPost {
             var rawBody json.RawMessage
             err := json.NewDecoder(req.Body).Decode(&rawBody)
             if err != nil {
-                fmt.Println(err)
                 http.Error(w, "Body cannot be parsed", http.StatusBadRequest)
                 return
             }
@@ -149,23 +183,19 @@ func main() {
 	defer db.Close()
 
     mux := http.NewServeMux()
-
+    mux.Handle("/", http.FileServer(http.Dir("./static")))
     mux.HandleFunc("/players/{id}", getDeleteHandler(playerSelectionFunc, playerDeleteFunc))
-
     mux.HandleFunc("/teams/{id}", getDeleteHandler(teamSelectionFunc, deleteTeam))
-
     mux.HandleFunc("/match/{id}", getDeleteHandler(matchSelectionFunc, deleteMatch))
-
     mux.HandleFunc("/teams/player/{teamID}/{playerID}", deleteTeamPlayerHandler())
-
+    mux.HandleFunc("/teams/all", getTeamsHandler())
     mux.HandleFunc("/players", postHandler(playerAddFunc))
-
+    mux.HandleFunc("/players/all", getPlayersHandler())
     mux.HandleFunc("/teams", postHandler(teamAddFunc))
-
     mux.HandleFunc("/match", postHandler(matchAddFunc))
-
     mux.HandleFunc("/teams/player", postHandler(teamPlayerAddFunc))
 
-	fmt.Println("Open your web browser and visit http://localhost:8080")
-    http.ListenAndServe(":8080", mux)
+
+    fmt.Println("Open your web browser and visit http://localhost:3000")
+    http.ListenAndServe(":3000", mux)
 }

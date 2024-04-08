@@ -1,5 +1,32 @@
 package main
 
+func selectTeams() []Team {
+	var teams []Team
+	rows, err := db.Query(
+		`SELECT 
+			teams.id,
+			teams.name
+		FROM teams
+		ORDER BY teams.name DESC
+		LIMIT 20
+		`)
+	handleError(err)
+	defer rows.Close()
+
+	for rows.Next() {
+		var team Team
+		if err := rows.Scan(&team.Id, &team.Name); err != nil {
+			handleError(err)
+		}
+		teams = append(teams, team)
+	}
+    if err = rows.Err(); err != nil {
+        handleError(err)
+    }
+
+	return teams
+}
+
 func selectTeam(id int) Team {
 	var team Team
 	rows, err := db.Query(
@@ -41,8 +68,8 @@ func selectTeam(id int) Team {
 	return team
 }
 
-func addTeam(name string) int {
-    result, err := db.Exec(`INSERT INTO teams (name) VALUES (?)`, name)
+func addTeam(team TeamDTO) int {
+    result, err := db.Exec(`INSERT INTO teams (name) VALUES (?)`, team.Name)
     handleError(err)
 
     lastInsertedID, err := result.LastInsertId()

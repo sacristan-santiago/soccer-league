@@ -2,6 +2,36 @@ package main
 
 import("fmt")
 
+func selectPlayers() []Player {
+	var players []Player
+	rows, err := db.Query(
+		`SELECT 
+			id,
+			first_name,
+			last_name,
+			rating
+		FROM players
+		ORDER BY id ASC
+		LIMIT 20
+		`)
+	handleError(err)
+	defer rows.Close()
+
+	for rows.Next() {
+		var player Player
+		if err := rows.Scan(&player.Id, &player.FirstName, &player.LastName, &player.Rating); err != nil {
+			handleError(err)
+		}
+		players = append(players, player)
+	}
+    if err = rows.Err(); err != nil {
+        handleError(err)
+    }
+
+	return players
+}
+
+
 func selectPlayer(id int) Player {
 	var player Player 
 	row := db.QueryRow(`SELECT * FROM players WHERE id = ?`, id)

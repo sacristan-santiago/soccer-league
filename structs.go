@@ -35,6 +35,10 @@ type PlayerDTO struct {
 	Rating    float32
 }
 
+type TeamDTO struct {
+	Name string
+}
+
 type TeamPlayerDTO struct {
 	TeamId int
 	PlayerId int
