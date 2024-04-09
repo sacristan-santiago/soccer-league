@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func deleteTeamPlayerHandler() http.HandlerFunc {
+func postDeleteTeamPlayerHandler() http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
         w.Header().Set("Content-Type", "application/json")
 
@@ -58,6 +58,29 @@ func getPlayersHandler() http.HandlerFunc {
             players := selectPlayers()
 
             err := json.NewEncoder(w).Encode(players)
+            if err != nil {
+                http.Error(w, "Cannot parse response", http.StatusInternalServerError)
+                return
+            }
+        }
+    }
+}
+
+func getPlayerTeams() http.HandlerFunc {
+    return func(w http.ResponseWriter, req *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+
+		playerIDString := req.PathValue("id")
+        playerID, err := strconv.Atoi(playerIDString)
+        if err != nil {
+            http.Error(w, "Invalid ID", http.StatusBadRequest)
+            return
+        }
+        
+        if req.Method ==  http.MethodGet {
+            teams := selectPlayerTeams(playerID)
+
+            err := json.NewEncoder(w).Encode(teams)
             if err != nil {
                 http.Error(w, "Cannot parse response", http.StatusInternalServerError)
                 return
@@ -171,7 +194,7 @@ func playerDeleteFunc(id int) {
     playerTeams := selectPlayerTeams(id)
 
     for _, team := range playerTeams {
-        deletePlayerfromTeam(id, team)
+        deletePlayerfromTeam(id, team.Id)
     }
 
     deletePlayer(id)

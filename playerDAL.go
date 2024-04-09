@@ -31,13 +31,42 @@ func selectPlayers() []Player {
 	return players
 }
 
-
 func selectPlayer(id int) Player {
 	var player Player 
 	row := db.QueryRow(`SELECT * FROM players WHERE id = ?`, id)
 	err := row.Scan(&player.Id, &player.FirstName, &player.LastName, &player.Rating)
 	handleError(err)
 	return player
+}
+
+func selectPlayerTeams(playerId int) []Team {
+	rows, err := db.Query(
+		`SELECT 
+			teams.id,
+			teams.name	
+		FROM teams 
+		JOIN team_player ON teams.id = team_player.team_id
+		JOIN players ON players.id = team_player.player_id
+		WHERE players.id = ?
+		`, playerId)
+	handleError(err)
+	defer rows.Close()
+
+	var teams []Team
+	for rows.Next() {
+		
+		var team Team
+		if err := rows.Scan(&team.Id, &team.Name); err != nil {
+			handleError(err)
+		}
+
+		teams = append(teams, team)
+	}
+    if err = rows.Err(); err != nil {
+        handleError(err)
+    }
+
+	return teams
 }
 
 func addPlayer(newPlayer PlayerDTO) int {
@@ -57,4 +86,3 @@ func deletePlayer(id int) {
 
 	fmt.Println("Succesfully deleted player!")
 }
-
