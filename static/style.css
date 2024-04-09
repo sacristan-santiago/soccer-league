@@ -6,12 +6,17 @@
 
 .PlayersTable {
     display: grid;
-    grid-template-columns: 150px 150px 150px 45px 67px;
+    grid-template-columns: 150px 150px 150px 150px 44px 96px;
 }
 
 .TeamsTable {
     display: grid;
-    grid-template-columns: 150px 45px;
+    grid-template-columns: 150px 44
+    px;
+}
+
+ul {
+    list-style-type: none;
 }
 
 .width33 {
