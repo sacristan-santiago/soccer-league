@@ -11,8 +11,7 @@
 
 .TeamsTable {
     display: grid;
-    grid-template-columns: 150px 44
-    px;
+    grid-template-columns: 150px 44px;
 }
 
 ul {

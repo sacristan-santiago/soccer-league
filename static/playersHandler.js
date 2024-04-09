@@ -31,7 +31,7 @@ document.getElementById("playerForm").addEventListener("submit", function (event
                 <td>${formData.FirstName}</td>
                 <td>${formData.LastName}</td>
                 <td>${formData.Rating}</td>
-                <td class="teams-column"></td>
+                <td class="teams-column"><ul data-player-id=${data.id}></ul></td>
                 <td><button class="deletePlayerButton" id="${data.id}">Delete</button></td>
                 <td><button class="manageTeamsButton" id="${data.id}">Manage Teams</button></td>
             `;
