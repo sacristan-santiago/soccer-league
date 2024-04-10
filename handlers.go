@@ -34,14 +34,14 @@ func postDeleteTeamPlayerHandler() http.HandlerFunc {
     }
 }
 
-func getTeamsHandler() http.HandlerFunc {
+func getAllEntitiesHandler(selectData func() interface{}) http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
         w.Header().Set("Content-Type", "application/json")
         
-        if req.Method ==  http.MethodGet {
-            teams := selectTeams()
+        if req.Method == http.MethodGet {
+            data := selectData()
 
-            err := json.NewEncoder(w).Encode(teams)
+            err := json.NewEncoder(w).Encode(data)
             if err != nil {
                 http.Error(w, "Cannot parse response", http.StatusInternalServerError)
                 return
@@ -50,20 +50,14 @@ func getTeamsHandler() http.HandlerFunc {
     }
 }
 
-func getPlayersHandler() http.HandlerFunc {
-    return func(w http.ResponseWriter, req *http.Request) {
-        w.Header().Set("Content-Type", "application/json")
-        
-        if req.Method ==  http.MethodGet {
-            players := selectPlayers()
-
-            err := json.NewEncoder(w).Encode(players)
-            if err != nil {
-                http.Error(w, "Cannot parse response", http.StatusInternalServerError)
-                return
-            }
-        }
-    }
+func getPlayersWrapper() interface{}{
+    return selectPlayers()
+}
+func getTeamsWrapper() interface{}{
+    return selectTeams()
+}
+func getMatchesWrapper() interface{}{
+    return selectMatches()
 }
 
 func getPlayerTeams() http.HandlerFunc {
@@ -90,7 +84,7 @@ func getPlayerTeams() http.HandlerFunc {
 }
 
 
-func getDeleteHandler(selectionFunc func(id int) interface{}, deleteFunc func(id int)) http.HandlerFunc {
+func getDeleteUpdateHandler(selectionFunc func(id int) interface{}, deleteFunc func(id int), updateFunc func(id int, body []byte) interface{}) http.HandlerFunc {
     return func(w http.ResponseWriter, req *http.Request) {
         w.Header().Set("Content-Type", "application/json")
 
@@ -112,8 +106,35 @@ func getDeleteHandler(selectionFunc func(id int) interface{}, deleteFunc func(id
         } else if req.Method == http.MethodDelete {
             deleteFunc(id)
             fmt.Fprintf(w, "Entity with Id: %d Succesfully deleted", id)
+        } else if req.Method == http.MethodPut {
+            var rawBody json.RawMessage
+            err := json.NewDecoder(req.Body).Decode(&rawBody)
+            if err != nil {
+                http.Error(w, "Body cannot be parsed", http.StatusBadRequest)
+                return
+            }
+            
+            updatedEntity := updateFunc(id, rawBody)
+
+            err = json.NewEncoder(w).Encode(updatedEntity)
+            if err != nil {
+                http.Error(w, "Cannot parse response", http.StatusInternalServerError)
+                return
+            }
         }
     }
+}
+
+func updateWrapperMock(id int, body []byte) interface{} {return nil}
+
+func updateMatchWrapper(id int, body []byte) interface{} {
+    var match MatchDTO
+    err := json.Unmarshal(body, &match)
+    if err != nil {
+        panic(err)
+    }
+
+    return updateMatchScore(id, match)
 }
 
 func postHandler(addFunc func(body []byte) int) http.HandlerFunc {

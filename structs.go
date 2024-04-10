@@ -18,15 +18,15 @@ type Match struct {
 	Id int `json:"id"`
 	TeamA int `json:"teamA"`
 	TeamB int `json:"teamB"`
-	ScoreA int `json:"scoreA"`
-	ScoreB int `json:"scoreB"`
+	ScoreA *int `json:"scoreA"`
+	ScoreB *int `json:"scoreB"`
 }
 
 type MatchDTO struct {
 	TeamA int
 	TeamB int
-	ScoreA int
-	ScoreB int
+	ScoreA *int
+	ScoreB *int
 }
 
 type PlayerDTO struct {
