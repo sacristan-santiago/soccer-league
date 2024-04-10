@@ -37,8 +37,7 @@ function deleteTeamButtonClickListener(button) {
             .then(response => {
                 if (response.ok) {
                     // If successful, remove the row from the table
-                    const rowToRemove = button.closest("tr");
-                    rowToRemove.remove();
+                    location.reload();
                 } else {
                     console.error("Failed to delete team");
                 }

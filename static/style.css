@@ -6,16 +6,37 @@
 
 .PlayersTable {
     display: grid;
-    grid-template-columns: 150px 150px 150px 150px 44px 96px;
+    grid-template-columns: 150px 150px 150px 150px 50px 111px;
 }
 
 .TeamsTable {
     display: grid;
-    grid-template-columns: 150px 44px;
+    grid-template-columns: 150px 50px;
+}
+
+.GamesTable {
+    display: grid;
+    grid-template-columns: 150px 150px 150px 150px 50px 101px;
+}
+
+.PlayersFormTable {
+    display: grid;
+    grid-template-columns: 150px 150px 150px 100px;
+}
+
+.TeamsFormTable {
+    display: grid;
+    grid-template-columns: 150px 100px;
+}
+
+.GamesFormTable {
+    display: grid;
+    grid-template-columns: 150px 150px 150px 150px 100px 101px;
 }
 
 ul {
     list-style-type: none;
+    margin: 0;
 }
 
 .width33 {
