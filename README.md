@@ -1,4 +1,8 @@
-# Soccer League ERP
+# YOUR PROJECT TITLE
+#### Video Demo: https://youtu.be/V791HxCerjo
+#### Description:
+
+# Soccer League Manager
 
 This Soccer League project provides functionality for managing a soccer league. It allows you to handle new players, teams, games, load results, follow team positions, tournaments, and more.
 
@@ -8,8 +12,6 @@ This Soccer League project provides functionality for managing a soccer league. 
 - **Team Management**: Create, edit, and remove teams from the league.
 - **Game Management**: Schedule and manage games between teams.
 - **Results Loading**: Record game results and update team standings accordingly.
-- **Team Positions**: View the standings of teams based on their performance in the league.
-- **Tournaments**: Organize and manage tournaments within the league.
 
 ## Installation
 
@@ -53,12 +55,6 @@ This Soccer League project provides functionality for managing a soccer league. 
 
 4. **Results Loading**:
    - Record game results and update team standings accordingly.
-
-5. **Team Positions**:
-   - View the standings of teams based on their performance in the league.
-
-6. **Tournaments**:
-   - Organize and manage tournaments within the league.
 
 ## Contributing
 
