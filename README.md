@@ -13,6 +13,37 @@ This Soccer League project provides functionality for managing a soccer league. 
 - **Game Management**: Schedule and manage games between teams.
 - **Results Loading**: Record game results and update team standings accordingly.
 
+
+Here's an improved version:
+
+## Project Files Overview
+
+1. **main.go**: This file launches the server, serving both a backend REST API and a simple front-end with HTML and Javascript files.
+
+2. **handlers.go**: Each endpoint from `main.go` is routed to the appropriate functions in the data access layer files, where data input/output is processed.
+
+3. **matchDAL.go, teamsDAL.go, playerDAL.go**: These files manage interactions with the SQLite database, handling data operations for matches, teams, and players respectively.
+
+4. **sqliteInit.go**: Responsible for setting up the database by creating the necessary tables required for the project.
+
+5. **structs.go**: Contains all the necessary structs for the project, including definitions for Player, Match, Team, and data transfer objects.
+
+6. **errors.go**: Houses a simple error handling function for Go.
+
+7. **go.mod, go.sum, soccer-league.exe**: Files generated during the building/running of the project.
+
+8. **teams.go**: Provides additional functionalities related to team creation.
+
+9. **/static**: This directory contains all the HTML and Javascript files necessary for running the UI.
+
+10. **/static/index.html**: Basic structure for the user interface.
+
+11. **/static/loadGamesTable.js, /static/loadPlayersTable.js, /static/loadTeamsTable.js**: These files populate tables with data by making calls to the backend API. They also implement dynamic buttons and functionalities.
+
+12. **/static/modalHandler.js, /static/playersHandler.js, /static/gamesHandler.js, /static/teamsHandler.js**: Responsible for managing dynamic interactions with the UI, updating the HTML as needed.
+
+13. **/static/styles.css**: A simple stylesheet for designing the UI.
+
 ## Installation
 
 1. Clone the repository:
